@@ -89,7 +89,7 @@ public class Simulateur {
     // revenu net
     private int rNetDecl1 = 0;
     private int rNetDecl2 = 0;
-    
+
     // revenu fiscal de référence
     private double rFRef = 0;
 
@@ -158,7 +158,7 @@ public class Simulateur {
 
     // Fonction de calcul de l'impôt sur le revenu net en France en 2024 sur les revenu 2023
 
-    public int calculImpot( int revNetDecl1, int revNetDecl2, SituationFamiliale sitFam, int nombreEnfants, int nombreEnfantsHandicapes, boolean parentIsol) {
+    public int calculImpot( int revNetDecl1, int revNetDecl2, SituationFamiliale situationFamiliale, int nombreEnfants, int nombreEnfantsHandicapes, boolean parentIsol) {
 
         // Préconditions
         if ( revNetDecl1  < 0 || revNetDecl2 < 0 ) {
@@ -173,7 +173,7 @@ public class Simulateur {
             throw new IllegalArgumentException("Le nombre d'enfants handicapés ne peut pas être négatif");
         }
 
-        if ( sitFam == null ) {
+        if ( situationFamiliale == null ) {
             throw new IllegalArgumentException("La situation familiale ne peut pas être null");
         }
 
@@ -185,11 +185,11 @@ public class Simulateur {
             throw new IllegalArgumentException("Le nombre d'enfants ne peut pas être supérieur à 7");
         }
 
-        if ( parentIsol && ( sitFam == SituationFamiliale.MARIE || sitFam == SituationFamiliale.PACSE ) ) {
+        if ( parentIsol && ( situationFamiliale == SituationFamiliale.MARIE || situationFamiliale == SituationFamiliale.PACSE ) ) {
             throw new IllegalArgumentException("Un parent isolé ne peut pas être marié ou pacsé");
         }
 
-        boolean seul = sitFam == SituationFamiliale.CELIBATAIRE || sitFam == SituationFamiliale.DIVORCE || sitFam == SituationFamiliale.VEUF;
+        boolean seul = situationFamiliale == SituationFamiliale.CELIBATAIRE || situationFamiliale == SituationFamiliale.DIVORCE || situationFamiliale == SituationFamiliale.VEUF;
         if (  seul && revNetDecl2 > 0 ) {
             throw new IllegalArgumentException("Un célibataire, un divorcé ou un veuf ne peut pas avoir de revenu pour le déclarant 2");
         }
@@ -199,8 +199,6 @@ public class Simulateur {
         rNetDecl1 = revNetDecl1;
         rNetDecl2 = revNetDecl2;
 
-        nombreEnfants = nombreEnfants;
-        nombreEnfantsHandicapes = nombreEnfantsHandicapes;
         parIso = parentIsol;
 
         limites[0] = l00;
@@ -235,12 +233,12 @@ public class Simulateur {
         System.out.println("--------------------------------------------------");
         System.out.println( "Revenu net declarant1 : " + rNetDecl1 );
         System.out.println( "Revenu net declarant2 : " + rNetDecl2 );
-        System.out.println( "Situation familiale : " + sitFam.name() );
+        System.out.println( "Situation familiale : " + situationFamiliale.name() );
 
         // Abattement
         // EXIGENCE : EXG_IMPOT_02
         CalculateurAbattements calculateurAbattements = new CalculateurAbattements();
-        abt = calculateurAbattements.calculerAbattement(revNetDecl1, revNetDecl2, tAbt, lAbtMin, lAbtMax, sitFam);
+        abt = calculateurAbattements.calculerAbattement(revNetDecl1, revNetDecl2, tAbt, lAbtMin, lAbtMax, situationFamiliale);
         System.out.println( "Abattement : " + abt );
 
         rFRef = rNetDecl1 + revNetDecl2 - abt;
@@ -253,7 +251,7 @@ public class Simulateur {
 
         // parts déclarants
         // EXIG  : EXG_IMPOT_03
-        switch ( sitFam ) {
+        switch ( situationFamiliale ) {
             case CELIBATAIRE:
                 nbPtsDecl = 1;
                 break;
@@ -292,7 +290,7 @@ public class Simulateur {
         }
 
         // Veuf avec enfant
-        if ( sitFam == SituationFamiliale.VEUF && nombreEnfants > 0 ) {
+        if ( situationFamiliale == SituationFamiliale.VEUF && nombreEnfants > 0 ) {
             nbPts = nbPts + 1;
         }
 
@@ -394,7 +392,7 @@ public class Simulateur {
         // Calcul de la decote
         // EXIGENCE : EXG_IMPOT_06
         CalculateurDecote calculateurDecote = new CalculateurDecote();
-        decote = calculateurDecote.calculerDecote(mImp, sitFam);
+        decote = calculateurDecote.calculerDecote(mImp, situationFamiliale);
 
         System.out.println( "Decote : " + decote );
 
