@@ -6,7 +6,6 @@ import com.kerware.simulateur.SituationFamiliale;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
@@ -17,7 +16,7 @@ public class CalculateurAbattementsTest {
 
     private final CalculateurAbattements calculateur = new CalculateurAbattements();
 
-    public static Stream<Arguments> fournirDonneesPourAbattement() {
+    public static Stream<Arguments> donneesPourAbattement() {
         return Stream.of(
                 Arguments.of(4000, 0, SituationFamiliale.CELIBATAIRE, 4000 - 495),         // < min
                 Arguments.of(12000, 0, SituationFamiliale.CELIBATAIRE, 12000 - 1200),      // normal
@@ -30,7 +29,7 @@ public class CalculateurAbattementsTest {
 
     @DisplayName("Test du calcul de l'abattement pour différents foyers fiscaux")
     @ParameterizedTest(name = "R1={0}, R2={1}, Situation={2} => RFR attendu={3}")
-    @MethodSource("fournirDonneesPourAbattement")
+    @MethodSource("donneesPourAbattement")
     public void testCalculerAbattement(double revenuNetDeclarant1, double revenuNetDeclarant2, SituationFamiliale situationFamiliale, double revenuFiscalAttendu) {
         FoyerFiscal foyer = new FoyerFiscal(50000, situationFamiliale, 0);
 

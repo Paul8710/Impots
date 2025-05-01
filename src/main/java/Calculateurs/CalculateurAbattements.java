@@ -4,17 +4,6 @@ import FoyerFiscal.FoyerFiscal;
 import com.kerware.simulateur.SituationFamiliale;
 
 public class CalculateurAbattements {
-
-    /**
-     * Abattement
-     */
-    private double abattement = 0;
-
-    /**
-     * revenu fiscal de référence
-     */
-    private double revenuFiscalReference = 0;
-
     /**
      * Calcule l'abattement en prenant en compte les revenus nets des déclarants.
      * Prend en compte la situation du couple, et abattement borné entre une limite minimale et une limite maximale.
