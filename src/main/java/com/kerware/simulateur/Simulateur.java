@@ -28,6 +28,9 @@ public class Simulateur {
 
 
     // Les limites des tranches de revenus imposables
+    /*
+    TODO: Peut être faire des constantes facilelement modifiable dans param2024 ?
+     */
     private int l00 = 0 ;
     private int l01 = 11294;
     private int l02 = 28797;
@@ -35,7 +38,7 @@ public class Simulateur {
     private int l04 = 177106;
     private int l05 = Integer.MAX_VALUE;
 
-    private int[] limites = new int[6];
+    private int[] limitesTranchesFiscales = { l00, l01, l02, l03, l04, l05 };
 
     // Les taux d'imposition par tranche
     private double t00 = 0.0;
@@ -44,7 +47,8 @@ public class Simulateur {
     private double t03 = 0.41;
     private double t04 = 0.45;
 
-    private double[] taux = new double[5];
+    private double[] tauxImpositionTranches = { t00, t01, t02, t03, t04 };
+
 
     // Les limites des tranches pour la contribution exceptionnelle sur les hauts revenus
     private int lce00 = 0;
@@ -72,54 +76,43 @@ public class Simulateur {
     private double[] tauxCEHRCouple = new double[4];
 
     // Abattement
-    private  int lAbtMax = 14171;
-    private  int lAbtMin = 495;
-    private double tAbt = 0.1;
+    private  int lmontantAbattementMax = 14171;
+    private  int lmontantAbattementMin = 495;
+    private double tmontantAbattement = 0.1;
 
     // Plafond de baisse maximal par demi part
     private double plafDemiPart = 1759;
 
-    private double seuilDecoteDeclarantSeul = 1929;
-    private double seuilDecoteDeclarantCouple    = 3191;
-
-    private double decoteMaxDeclarantSeul = 873;
-    private double decoteMaxDeclarantCouple = 1444;
-    private double tauxDecote = 0.4525;
-
-    // revenu net
-    private int revenuNetDeclarant1 = 0;
-    private int revenuNetDeclarant2 = 0;
-
     // revenu fiscal de référence
-    private double rFRef = 0;
+    private double revenuFiscalReference = 0;
 
     // revenu imposable
     private double rImposable = 0;
 
     // abattement
-    private double abt = 0;
+    private double montantAbattement = 0;
 
     // nombre de parts des  déclarants
-    private double nbPtsDecl = 0;
+    private double nombrePartsDeclarees = 0;
     // nombre de parts du foyer fiscal
-    private double nbPts = 0;
+    private double nombreParts = 0;
 
     // decote
     private double decote = 0;
     // impôt des déclarants
-    private double mImpDecl = 0;
+    private double montantImpotDeclarants = 0;
     // impôt du foyer fiscal
-    private double mImp = 0;
-    private double mImpAvantDecote = 0;
+    private double montantImpot = 0;
+    private double montantImpotAvantDecote = 0;
     // parent isolé
     private boolean parentIsole = false;
     // Contribution exceptionnelle sur les hauts revenus
-    private double contribExceptionnelle = 0;
+    private double contributionExceptionnelle = 0;
 
     // Getters pour adapter le code legacy pour les tests unitaires
 
     public double getRevenuReference() {
-        return rFRef;
+        return revenuFiscalReference;
     }
 
     public double getDecote() {
@@ -128,31 +121,23 @@ public class Simulateur {
 
 
     public double getAbattement() {
-        return abt;
+        return montantAbattement;
     }
 
     public double getNbParts() {
-        return nbPts;
+        return nombreParts;
     }
 
     public double getImpotAvantDecote() {
-        return mImpAvantDecote;
+        return montantImpotAvantDecote;
     }
 
     public double getImpotNet() {
-        return mImp;
-    }
-
-    public int getRevenuNetDeclatant1() {
-        return revenuNetDeclarant1;
-    }
-
-    public int getRevenuNetDeclatant2() {
-        return revenuNetDeclarant2;
+        return montantImpot;
     }
 
     public double getContribExceptionnelle() {
-        return contribExceptionnelle;
+        return contributionExceptionnelle;
     }
 
 
@@ -195,21 +180,6 @@ public class Simulateur {
         }
 
         // Initialisation des variables
-        
-        
-        limites[0] = l00;
-        limites[1] = l01;
-        limites[2] = l02;
-        limites[3] = l03;
-        limites[4] = l04;
-        limites[5] = l05;
-
-        taux[0] = t00;
-        taux[1] = t01;
-        taux[2] = t02;
-        taux[3] = t03;
-        taux[4] = t04;
-
         limitesCEHR[0] = lce00;
         limitesCEHR[1] = lce01;
         limitesCEHR[2] = lce02;
@@ -234,34 +204,34 @@ public class Simulateur {
         // Abattement
         // EXIGENCE : EXG_IMPOT_02
         CalculateurAbattements calculateurAbattements = new CalculateurAbattements();
-        abt = calculateurAbattements.calculerAbattement(revenuNetDeclarant1, revenuNetDeclarant2, tAbt, lAbtMin, lAbtMax, situationFamiliale);
-        System.out.println( "Abattement : " + abt );
+        montantAbattement = calculateurAbattements.calculerAbattement(revenuNetDeclarant1, revenuNetDeclarant2, tmontantAbattement, lmontantAbattementMin, lmontantAbattementMax, situationFamiliale);
+        System.out.println( "Abattement : " + montantAbattement );
 
-        rFRef = revenuNetDeclarant1 + revenuNetDeclarant2 - abt;
-        if ( rFRef < 0 ) {
-            rFRef = 0;
+        revenuFiscalReference = revenuNetDeclarant1 + revenuNetDeclarant2 - montantAbattement;
+        if ( revenuFiscalReference < 0 ) {
+            revenuFiscalReference = 0;
         }
 
-        System.out.println( "Revenu fiscal de référence : " + rFRef );
+        System.out.println( "Revenu fiscal de référence : " + revenuFiscalReference );
 
 
         // parts déclarants
         // EXIG  : EXG_IMPOT_03
         switch ( situationFamiliale ) {
             case CELIBATAIRE:
-                nbPtsDecl = 1;
+                nombrePartsDeclarees = 1;
                 break;
             case MARIE:
-                nbPtsDecl = 2;
+                nombrePartsDeclarees = 2;
                 break;
             case DIVORCE:
-                nbPtsDecl = 1;
+                nombrePartsDeclarees = 1;
                 break;
             case VEUF:
-                nbPtsDecl = 1;
+                nombrePartsDeclarees = 1;
                 break;
             case PACSE:
-                nbPtsDecl = 2;
+                nombrePartsDeclarees = 2;
                 break;
         }
 
@@ -270,9 +240,9 @@ public class Simulateur {
 
         // parts enfants à charge
         if ( nombreEnfants <= 2 ) {
-            nbPts = nbPtsDecl + nombreEnfants * 0.5;
+            nombreParts = nombrePartsDeclarees + nombreEnfants * 0.5;
         } else if ( nombreEnfants > 2 ) {
-            nbPts = nbPtsDecl+  1.0 + ( nombreEnfants - 2 );
+            nombreParts = nombrePartsDeclarees+  1.0 + ( nombreEnfants - 2 );
         }
 
         // parent isolé
@@ -281,125 +251,125 @@ public class Simulateur {
 
         if ( parentIsole ) {
             if ( nombreEnfants > 0 ){
-                nbPts = nbPts + 0.5;
+                nombreParts = nombreParts + 0.5;
             }
         }
 
         // Veuf avec enfant
         if ( situationFamiliale == SituationFamiliale.VEUF && nombreEnfants > 0 ) {
-            nbPts = nbPts + 1;
+            nombreParts = nombreParts + 1;
         }
 
         // enfant handicapé
-        nbPts = nbPts + nombreEnfantsHandicapes * 0.5;
+        nombreParts = nombreParts + nombreEnfantsHandicapes * 0.5;
 
-        System.out.println( "Nombre de parts : " + nbPts );
+        System.out.println( "Nombre de parts : " + nombreParts );
 
         // EXIGENCE : EXG_IMPOT_07:
         // Contribution exceptionnelle sur les hauts revenus
-        contribExceptionnelle = 0;
+        contributionExceptionnelle = 0;
         int i = 0;
         do {
-            if ( rFRef >= limitesCEHR[i] && rFRef < limitesCEHR[i+1] ) {
-                if ( nbPtsDecl == 1 ) {
-                    contribExceptionnelle += ( rFRef - limitesCEHR[i] ) * tauxCEHRCelibataire[i];
+            if ( revenuFiscalReference >= limitesCEHR[i] && revenuFiscalReference < limitesCEHR[i+1] ) {
+                if ( nombrePartsDeclarees == 1 ) {
+                    contributionExceptionnelle += ( revenuFiscalReference - limitesCEHR[i] ) * tauxCEHRCelibataire[i];
                 } else {
-                    contribExceptionnelle += ( rFRef - limitesCEHR[i] ) * tauxCEHRCouple[i];
+                    contributionExceptionnelle += ( revenuFiscalReference - limitesCEHR[i] ) * tauxCEHRCouple[i];
                 }
                 break;
             } else {
-                if ( nbPtsDecl == 1 ) {
-                    contribExceptionnelle += ( limitesCEHR[i+1] - limitesCEHR[i] ) * tauxCEHRCelibataire[i];
+                if ( nombrePartsDeclarees == 1 ) {
+                    contributionExceptionnelle += ( limitesCEHR[i+1] - limitesCEHR[i] ) * tauxCEHRCelibataire[i];
                 } else {
-                    contribExceptionnelle += ( limitesCEHR[i+1] - limitesCEHR[i] ) * tauxCEHRCouple[i];
+                    contributionExceptionnelle += ( limitesCEHR[i+1] - limitesCEHR[i] ) * tauxCEHRCouple[i];
                 }
             }
             i++;
         } while( i < 5);
 
-        contribExceptionnelle = Math.round( contribExceptionnelle );
-        System.out.println( "Contribution exceptionnelle sur les hauts revenus : " + contribExceptionnelle );
+        contributionExceptionnelle = Math.round( contributionExceptionnelle );
+        System.out.println( "Contribution exceptionnelle sur les hauts revenus : " + contributionExceptionnelle );
 
         // Calcul impôt des declarants
         // EXIGENCE : EXG_IMPOT_04
-        rImposable = rFRef / nbPtsDecl ;
+        rImposable = revenuFiscalReference / nombrePartsDeclarees ;
 
-        mImpDecl = 0;
+        montantImpotDeclarants = 0;
 
         i = 0;
         do {
-            if ( rImposable >= limites[i] && rImposable < limites[i+1] ) {
-                mImpDecl += ( rImposable - limites[i] ) * taux[i];
+            if ( rImposable >= limitesTranchesFiscales[i] && rImposable < limitesTranchesFiscales[i+1] ) {
+                montantImpotDeclarants += ( rImposable - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
                 break;
             } else {
-                mImpDecl += ( limites[i+1] - limites[i] ) * taux[i];
+                montantImpotDeclarants += ( limitesTranchesFiscales[i+1] - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
             }
             i++;
         } while( i < 5);
 
-        mImpDecl = mImpDecl * nbPtsDecl;
-        mImpDecl = Math.round( mImpDecl );
+        montantImpotDeclarants = montantImpotDeclarants * nombrePartsDeclarees;
+        montantImpotDeclarants = Math.round( montantImpotDeclarants );
 
-        System.out.println( "Impôt brut des déclarants : " + mImpDecl );
+        System.out.println( "Impôt brut des déclarants : " + montantImpotDeclarants );
 
         // Calcul impôt foyer fiscal complet
         // EXIGENCE : EXG_IMPOT_04
-        rImposable =  rFRef / nbPts;
-        mImp = 0;
+        rImposable =  revenuFiscalReference / nombreParts;
+        montantImpot = 0;
         i = 0;
 
         do {
-            if ( rImposable >= limites[i] && rImposable < limites[i+1] ) {
-                mImp += ( rImposable - limites[i] ) * taux[i];
+            if ( rImposable >= limitesTranchesFiscales[i] && rImposable < limitesTranchesFiscales[i+1] ) {
+                montantImpot += ( rImposable - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
                 break;
             } else {
-                mImp += ( limites[i+1] - limites[i] ) * taux[i];
+                montantImpot += ( limitesTranchesFiscales[i+1] - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
             }
             i++;
         } while( i < 5);
 
-        mImp = mImp * nbPts;
-        mImp = Math.round( mImp );
+        montantImpot = montantImpot * nombreParts;
+        montantImpot = Math.round( montantImpot );
 
-        System.out.println( "Impôt brut du foyer fiscal complet : " + mImp );
+        System.out.println( "Impôt brut du foyer fiscal complet : " + montantImpot );
 
         // Vérification de la baisse d'impôt autorisée
         // EXIGENCE : EXG_IMPOT_05
         // baisse impot
 
-        double baisseImpot = mImpDecl - mImp;
+        double baisseImpot = montantImpotDeclarants - montantImpot;
 
         System.out.println( "Baisse d'impôt : " + baisseImpot );
 
         // dépassement plafond
-        double ecartPts = nbPts - nbPtsDecl;
+        double ecartPts = nombreParts - nombrePartsDeclarees;
 
         double plafond = (ecartPts / 0.5) * plafDemiPart;
 
         System.out.println( "Plafond de baisse autorisée " + plafond );
 
         if ( baisseImpot >= plafond ) {
-            mImp = mImpDecl - plafond;
+            montantImpot = montantImpotDeclarants - plafond;
         }
 
-        System.out.println( "Impôt brut après plafonnement avant decote : " + mImp );
-        mImpAvantDecote = mImp;
+        System.out.println( "Impôt brut après plafonnement avant decote : " + montantImpot );
+        montantImpotAvantDecote = montantImpot;
 
         // Calcul de la decote
         // EXIGENCE : EXG_IMPOT_06
         CalculateurDecote calculateurDecote = new CalculateurDecote();
-        decote = calculateurDecote.calculerDecote(mImp, situationFamiliale);
+        decote = calculateurDecote.calculerDecote(montantImpot, situationFamiliale);
 
         System.out.println( "Decote : " + decote );
 
-        mImp = mImp - decote;
+        montantImpot = montantImpot - decote;
 
-        mImp += contribExceptionnelle;
+        montantImpot += contributionExceptionnelle;
 
-        mImp = Math.round( mImp );
+        montantImpot = Math.round( montantImpot );
 
-        System.out.println( "Impôt sur le revenu net final : " + mImp );
-        return  (int)mImp;
+        System.out.println( "Impôt sur le revenu net final : " + montantImpot );
+        return  (int)montantImpot;
     }
 
 
