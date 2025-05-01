@@ -1,5 +1,6 @@
 package com.kerware.simulateur;
 
+import Calculateurs.CalculateurAbattements;
 import Calculateurs.CalculateurDecote;
 
 /**
@@ -242,29 +243,8 @@ public class Simulateur {
 
         // Abattement
         // EXIGENCE : EXG_IMPOT_02
-        long abt1 = Math.round(rNetDecl1 * tAbt);
-        long abt2 = Math.round(rNetDecl2 * tAbt);
-
-        if (abt1 > lAbtMax) {
-            abt1 = lAbtMax;
-        }
-        if ( sitFam == SituationFamiliale.MARIE || sitFam == SituationFamiliale.PACSE ) {
-            if (abt2 > lAbtMax) {
-                abt2 = lAbtMax;
-            }
-        }
-
-        if (abt1 < lAbtMin) {
-            abt1 = lAbtMin;
-        }
-
-        if ( sitFam == SituationFamiliale.MARIE || sitFam == SituationFamiliale.PACSE ) {
-            if (abt2 < lAbtMin) {
-                abt2 = lAbtMin;
-            }
-        }
-
-        abt = abt1 + abt2;
+        CalculateurAbattements calculateurAbattements = new CalculateurAbattements();
+        abt = calculateurAbattements.calculerAbattement(revNetDecl1, revNetDecl2, tAbt, lAbtMin, lAbtMax, sitFam);
         System.out.println( "Abattement : " + abt );
 
         rFRef = rNetDecl1 + revNetDecl2 - abt;

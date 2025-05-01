@@ -37,10 +37,7 @@ public class CalculateurAbattements {
             );
         }
 
-        double abattementTotal = abattement1 + abattement2;
-        double revenuFiscalReference = revenuNetDeclarant1 + revenuNetDeclarant2 - abattementTotal;
-
-        return Math.max(revenuFiscalReference, 0);
+        return abattement1 + abattement2;
     }
 
     /**
