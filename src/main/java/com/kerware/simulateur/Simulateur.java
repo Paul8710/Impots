@@ -87,8 +87,8 @@ public class Simulateur {
     private double tauxDecote = 0.4525;
 
     // revenu net
-    private int rNetDecl1 = 0;
-    private int rNetDecl2 = 0;
+    private int revenuNetDeclarant1 = 0;
+    private int revenuNetDeclarant2 = 0;
 
     // revenu fiscal de référence
     private double rFRef = 0;
@@ -112,7 +112,7 @@ public class Simulateur {
     private double mImp = 0;
     private double mImpAvantDecote = 0;
     // parent isolé
-    private boolean parIso = false;
+    private boolean parentIsole = false;
     // Contribution exceptionnelle sur les hauts revenus
     private double contribExceptionnelle = 0;
 
@@ -144,11 +144,11 @@ public class Simulateur {
     }
 
     public int getRevenuNetDeclatant1() {
-        return rNetDecl1;
+        return revenuNetDeclarant1;
     }
 
     public int getRevenuNetDeclatant2() {
-        return rNetDecl2;
+        return revenuNetDeclarant2;
     }
 
     public double getContribExceptionnelle() {
@@ -158,10 +158,10 @@ public class Simulateur {
 
     // Fonction de calcul de l'impôt sur le revenu net en France en 2024 sur les revenu 2023
 
-    public int calculImpot( int revNetDecl1, int revNetDecl2, SituationFamiliale situationFamiliale, int nombreEnfants, int nombreEnfantsHandicapes, boolean parentIsol) {
+    public int calculImpot( int revenuNetDeclarant1, int revenuNetDeclarant2, SituationFamiliale situationFamiliale, int nombreEnfants, int nombreEnfantsHandicapes, boolean parentIsole) {
 
         // Préconditions
-        if ( revNetDecl1  < 0 || revNetDecl2 < 0 ) {
+        if ( revenuNetDeclarant1  < 0 || revenuNetDeclarant2 < 0 ) {
             throw new IllegalArgumentException("Le revenu net ne peut pas être négatif");
         }
 
@@ -185,22 +185,18 @@ public class Simulateur {
             throw new IllegalArgumentException("Le nombre d'enfants ne peut pas être supérieur à 7");
         }
 
-        if ( parentIsol && ( situationFamiliale == SituationFamiliale.MARIE || situationFamiliale == SituationFamiliale.PACSE ) ) {
+        if ( parentIsole && ( situationFamiliale == SituationFamiliale.MARIE || situationFamiliale == SituationFamiliale.PACSE ) ) {
             throw new IllegalArgumentException("Un parent isolé ne peut pas être marié ou pacsé");
         }
 
         boolean seul = situationFamiliale == SituationFamiliale.CELIBATAIRE || situationFamiliale == SituationFamiliale.DIVORCE || situationFamiliale == SituationFamiliale.VEUF;
-        if (  seul && revNetDecl2 > 0 ) {
+        if (  seul && revenuNetDeclarant2 > 0 ) {
             throw new IllegalArgumentException("Un célibataire, un divorcé ou un veuf ne peut pas avoir de revenu pour le déclarant 2");
         }
 
         // Initialisation des variables
-
-        rNetDecl1 = revNetDecl1;
-        rNetDecl2 = revNetDecl2;
-
-        parIso = parentIsol;
-
+        
+        
         limites[0] = l00;
         limites[1] = l01;
         limites[2] = l02;
@@ -231,17 +227,17 @@ public class Simulateur {
         tauxCEHRCouple[3] = tce03C;
 
         System.out.println("--------------------------------------------------");
-        System.out.println( "Revenu net declarant1 : " + rNetDecl1 );
-        System.out.println( "Revenu net declarant2 : " + rNetDecl2 );
+        System.out.println( "Revenu net declarant1 : " + revenuNetDeclarant1 );
+        System.out.println( "Revenu net declarant2 : " + revenuNetDeclarant2 );
         System.out.println( "Situation familiale : " + situationFamiliale.name() );
 
         // Abattement
         // EXIGENCE : EXG_IMPOT_02
         CalculateurAbattements calculateurAbattements = new CalculateurAbattements();
-        abt = calculateurAbattements.calculerAbattement(revNetDecl1, revNetDecl2, tAbt, lAbtMin, lAbtMax, situationFamiliale);
+        abt = calculateurAbattements.calculerAbattement(revenuNetDeclarant1, revenuNetDeclarant2, tAbt, lAbtMin, lAbtMax, situationFamiliale);
         System.out.println( "Abattement : " + abt );
 
-        rFRef = rNetDecl1 + revNetDecl2 - abt;
+        rFRef = revenuNetDeclarant1 + revenuNetDeclarant2 - abt;
         if ( rFRef < 0 ) {
             rFRef = 0;
         }
@@ -281,9 +277,9 @@ public class Simulateur {
 
         // parent isolé
 
-        System.out.println( "Parent isolé : " + parIso );
+        System.out.println( "Parent isolé : " + parentIsole );
 
-        if ( parIso ) {
+        if ( parentIsole ) {
             if ( nombreEnfants > 0 ){
                 nbPts = nbPts + 0.5;
             }
