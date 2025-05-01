@@ -95,7 +95,7 @@ public class Simulateur {
     private double montantAbattement = 0;
 
     // nombre de parts des  déclarants
-    private double nombrePartsDeclarees = 0;
+    private double nombrePartsDeclarants= 0;
     // nombre de parts du foyer fiscal
     private double nombreParts = 0;
 
@@ -219,39 +219,14 @@ public class Simulateur {
 
         // parts déclarants
         // EXIG  : EXG_IMPOT_03
+        CalculateurParts calculateurParts = new CalculateurParts();
 
+        nombrePartsDeclarants= calculateurParts.nombrePartsSituationFamiliale(situationFamiliale);
 
-        /*
-        *TODO: Garder pour le moment car on nombrePartsDeclaree != NombrePart
-         */
-        switch ( situationFamiliale ) {
-            case CELIBATAIRE:
-                nombrePartsDeclarees = 1;
-                break;
-            case MARIE:
-                nombrePartsDeclarees = 2;
-                break;
-            case DIVORCE:
-                nombrePartsDeclarees = 1;
-                break;
-            case VEUF:
-                nombrePartsDeclarees = 1;
-                break;
-            case PACSE:
-                nombrePartsDeclarees = 2;
-                break;
-        }
+        nombreParts = calculateurParts.calculerParts(situationFamiliale, nombreEnfants, nombreEnfantsHandicapes, parentIsole);
 
         System.out.println( "Nombre d'enfants  : " + nombreEnfants );
         System.out.println( "Nombre d'enfants handicapés : " + nombreEnfantsHandicapes );
-
-
-
-
-
-        CalculateurParts calculateurParts = new CalculateurParts();
-        nombreParts = calculateurParts.calculerParts(situationFamiliale, nombreEnfants, nombreEnfantsHandicapes, parentIsole);
-
         System.out.println( "Nombre de parts : " + nombreParts );
 
 
@@ -262,14 +237,14 @@ public class Simulateur {
         int i = 0;
         do {
             if ( revenuFiscalReference >= limitesCEHR[i] && revenuFiscalReference < limitesCEHR[i+1] ) {
-                if ( nombrePartsDeclarees == 1 ) {
+                if ( nombrePartsDeclarants== 1 ) {
                     contributionExceptionnelle += ( revenuFiscalReference - limitesCEHR[i] ) * tauxCEHRCelibataire[i];
                 } else {
                     contributionExceptionnelle += ( revenuFiscalReference - limitesCEHR[i] ) * tauxCEHRCouple[i];
                 }
                 break;
             } else {
-                if ( nombrePartsDeclarees == 1 ) {
+                if ( nombrePartsDeclarants== 1 ) {
                     contributionExceptionnelle += ( limitesCEHR[i+1] - limitesCEHR[i] ) * tauxCEHRCelibataire[i];
                 } else {
                     contributionExceptionnelle += ( limitesCEHR[i+1] - limitesCEHR[i] ) * tauxCEHRCouple[i];
@@ -283,7 +258,7 @@ public class Simulateur {
 
         // Calcul impôt des declarants
         // EXIGENCE : EXG_IMPOT_04
-        rImposable = revenuFiscalReference / nombrePartsDeclarees ;
+        rImposable = revenuFiscalReference / nombrePartsDeclarants;
 
         montantImpotDeclarants = 0;
 
@@ -298,7 +273,7 @@ public class Simulateur {
             i++;
         } while( i < 5);
 
-        montantImpotDeclarants = montantImpotDeclarants * nombrePartsDeclarees;
+        montantImpotDeclarants = montantImpotDeclarants * nombrePartsDeclarants;
         montantImpotDeclarants = Math.round( montantImpotDeclarants );
 
         System.out.println( "Impôt brut des déclarants : " + montantImpotDeclarants );
@@ -333,7 +308,7 @@ public class Simulateur {
         System.out.println( "Baisse d'impôt : " + baisseImpot );
 
         // dépassement plafond
-        double ecartPts = nombreParts - nombrePartsDeclarees;
+        double ecartPts = nombreParts - nombrePartsDeclarants;
 
         double plafond = (ecartPts / 0.5) * plafDemiPart;
 
