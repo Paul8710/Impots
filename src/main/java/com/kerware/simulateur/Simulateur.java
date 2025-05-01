@@ -89,11 +89,7 @@ public class Simulateur {
     // revenu net
     private int rNetDecl1 = 0;
     private int rNetDecl2 = 0;
-    // nb enfants
-    private int nbEnf = 0;
-    // nb enfants handicapés
-    private int nbEnfH = 0;
-
+    
     // revenu fiscal de référence
     private double rFRef = 0;
 
@@ -162,18 +158,18 @@ public class Simulateur {
 
     // Fonction de calcul de l'impôt sur le revenu net en France en 2024 sur les revenu 2023
 
-    public int calculImpot( int revNetDecl1, int revNetDecl2, SituationFamiliale sitFam, int nbEnfants, int nbEnfantsHandicapes, boolean parentIsol) {
+    public int calculImpot( int revNetDecl1, int revNetDecl2, SituationFamiliale sitFam, int nombreEnfants, int nombreEnfantsHandicapes, boolean parentIsol) {
 
         // Préconditions
         if ( revNetDecl1  < 0 || revNetDecl2 < 0 ) {
             throw new IllegalArgumentException("Le revenu net ne peut pas être négatif");
         }
 
-        if ( nbEnfants < 0 ) {
+        if ( nombreEnfants < 0 ) {
             throw new IllegalArgumentException("Le nombre d'enfants ne peut pas être négatif");
         }
 
-        if ( nbEnfantsHandicapes < 0 ) {
+        if ( nombreEnfantsHandicapes < 0 ) {
             throw new IllegalArgumentException("Le nombre d'enfants handicapés ne peut pas être négatif");
         }
 
@@ -181,11 +177,11 @@ public class Simulateur {
             throw new IllegalArgumentException("La situation familiale ne peut pas être null");
         }
 
-        if ( nbEnfantsHandicapes > nbEnfants ) {
+        if ( nombreEnfantsHandicapes > nombreEnfants ) {
             throw new IllegalArgumentException("Le nombre d'enfants handicapés ne peut pas être supérieur au nombre d'enfants");
         }
 
-        if ( nbEnfants > 7 ) {
+        if ( nombreEnfants > 7 ) {
             throw new IllegalArgumentException("Le nombre d'enfants ne peut pas être supérieur à 7");
         }
 
@@ -203,8 +199,8 @@ public class Simulateur {
         rNetDecl1 = revNetDecl1;
         rNetDecl2 = revNetDecl2;
 
-        nbEnf = nbEnfants;
-        nbEnfH = nbEnfantsHandicapes;
+        nombreEnfants = nombreEnfants;
+        nombreEnfantsHandicapes = nombreEnfantsHandicapes;
         parIso = parentIsol;
 
         limites[0] = l00;
@@ -275,14 +271,14 @@ public class Simulateur {
                 break;
         }
 
-        System.out.println( "Nombre d'enfants  : " + nbEnf );
-        System.out.println( "Nombre d'enfants handicapés : " + nbEnfH );
+        System.out.println( "Nombre d'enfants  : " + nombreEnfants );
+        System.out.println( "Nombre d'enfants handicapés : " + nombreEnfantsHandicapes );
 
         // parts enfants à charge
-        if ( nbEnf <= 2 ) {
-            nbPts = nbPtsDecl + nbEnf * 0.5;
-        } else if ( nbEnf > 2 ) {
-            nbPts = nbPtsDecl+  1.0 + ( nbEnf - 2 );
+        if ( nombreEnfants <= 2 ) {
+            nbPts = nbPtsDecl + nombreEnfants * 0.5;
+        } else if ( nombreEnfants > 2 ) {
+            nbPts = nbPtsDecl+  1.0 + ( nombreEnfants - 2 );
         }
 
         // parent isolé
@@ -290,18 +286,18 @@ public class Simulateur {
         System.out.println( "Parent isolé : " + parIso );
 
         if ( parIso ) {
-            if ( nbEnf > 0 ){
+            if ( nombreEnfants > 0 ){
                 nbPts = nbPts + 0.5;
             }
         }
 
         // Veuf avec enfant
-        if ( sitFam == SituationFamiliale.VEUF && nbEnf > 0 ) {
+        if ( sitFam == SituationFamiliale.VEUF && nombreEnfants > 0 ) {
             nbPts = nbPts + 1;
         }
 
         // enfant handicapé
-        nbPts = nbPts + nbEnfH * 0.5;
+        nbPts = nbPts + nombreEnfantsHandicapes * 0.5;
 
         System.out.println( "Nombre de parts : " + nbPts );
 
