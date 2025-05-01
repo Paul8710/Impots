@@ -1,5 +1,7 @@
 package com.kerware.simulateur;
 
+import Calculateurs.CalculateurDecote;
+
 /**
  *  Cette classe permet de simuler le calcul de l'impôt sur le revenu
  *  en France pour l'année 2024 sur les revenus de l'année 2023 pour
@@ -415,24 +417,8 @@ public class Simulateur {
 
         // Calcul de la decote
         // EXIGENCE : EXG_IMPOT_06
-
-        decote = 0;
-        // decote
-        if ( nbPtsDecl == 1 ) {
-            if ( mImp < seuilDecoteDeclarantSeul ) {
-                 decote = decoteMaxDeclarantSeul - ( mImp  * tauxDecote );
-            }
-        }
-        if (  nbPtsDecl == 2 ) {
-            if ( mImp < seuilDecoteDeclarantCouple ) {
-                 decote =  decoteMaxDeclarantCouple - ( mImp  * tauxDecote  );
-            }
-        }
-        decote = Math.round( decote );
-
-        if ( mImp <= decote ) {
-            decote = mImp;
-        }
+        CalculateurDecote calculateurDecote = new CalculateurDecote();
+        decote = calculateurDecote.calculerDecote(mImp, sitFam);
 
         System.out.println( "Decote : " + decote );
 
