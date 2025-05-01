@@ -2,6 +2,8 @@ package com.kerware.simulateur;
 
 import Calculateurs.CalculateurAbattements;
 import Calculateurs.CalculateurDecote;
+import Calculateurs.CalculateurParts;
+import FoyerFiscal.FoyerFiscal;
 
 /**
  *  Cette classe permet de simuler le calcul de l'impôt sur le revenu
@@ -217,6 +219,11 @@ public class Simulateur {
 
         // parts déclarants
         // EXIG  : EXG_IMPOT_03
+
+
+        /*
+        *TODO: Garder pour le moment car on nombrePartsDeclaree != NombrePart
+         */
         switch ( situationFamiliale ) {
             case CELIBATAIRE:
                 nombrePartsDeclarees = 1;
@@ -238,32 +245,16 @@ public class Simulateur {
         System.out.println( "Nombre d'enfants  : " + nombreEnfants );
         System.out.println( "Nombre d'enfants handicapés : " + nombreEnfantsHandicapes );
 
-        // parts enfants à charge
-        if ( nombreEnfants <= 2 ) {
-            nombreParts = nombrePartsDeclarees + nombreEnfants * 0.5;
-        } else if ( nombreEnfants > 2 ) {
-            nombreParts = nombrePartsDeclarees+  1.0 + ( nombreEnfants - 2 );
-        }
 
-        // parent isolé
 
-        System.out.println( "Parent isolé : " + parentIsole );
 
-        if ( parentIsole ) {
-            if ( nombreEnfants > 0 ){
-                nombreParts = nombreParts + 0.5;
-            }
-        }
 
-        // Veuf avec enfant
-        if ( situationFamiliale == SituationFamiliale.VEUF && nombreEnfants > 0 ) {
-            nombreParts = nombreParts + 1;
-        }
-
-        // enfant handicapé
-        nombreParts = nombreParts + nombreEnfantsHandicapes * 0.5;
+        CalculateurParts calculateurParts = new CalculateurParts();
+        nombreParts = calculateurParts.calculerParts(situationFamiliale, nombreEnfants, nombreEnfantsHandicapes, parentIsole);
 
         System.out.println( "Nombre de parts : " + nombreParts );
+
+
 
         // EXIGENCE : EXG_IMPOT_07:
         // Contribution exceptionnelle sur les hauts revenus

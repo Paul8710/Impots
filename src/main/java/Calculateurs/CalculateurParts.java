@@ -1,39 +1,49 @@
 package Calculateurs;
 
 import FoyerFiscal.FoyerFiscal;
+import com.kerware.simulateur.SituationFamiliale;
 
 public class CalculateurParts {
 
     /**
      * Calcul le nombre de parts à l'aide du FoyerFiscal
-     * @param foyer Le FoyerFiscal à calculer
+     * @param situationFamiliale la situation familiale (marié, célibataire...)
      * @return Le nombre de parts du foyer
      */
-    public double calculerParts(FoyerFiscal foyer) {
-        double parts = 1.0;
+    public double calculerParts(SituationFamiliale situationFamiliale, int nombreEnfants, int nombreEnfantsHandicapes, boolean parentIsole) {
+        double nombreParts = 1.0;
 
-        switch (foyer.getSituationFamiliale()) {
-            case MARIE:
-            case PACSE:
-                parts = 2.0;
+        switch (situationFamiliale) {
+            case MARIE, PACSE:
+                nombreParts = 2.0;
                 break;
-            case CELIBATAIRE:
-            case DIVORCE:
-            case VEUF:
-                parts = 1.0;
+            case CELIBATAIRE, DIVORCE,VEUF:
+                nombreParts = 1.0;
                 break;
             default:
-                throw new IllegalArgumentException("Situation familiale inconnue : " + foyer.getSituationFamiliale());
+                throw new IllegalArgumentException("Situation familiale inconnue : " + situationFamiliale);
         }
 
-        int nbEnfants = foyer.getNombreEnfants();
-
-        if (nbEnfants <= 2) {
-            parts += nbEnfants * 0.5;
+        if (nombreEnfants <= 2) {
+            nombreParts += nombreEnfants * 0.5;
         } else {
-            parts += 1.0 + (nbEnfants - 2);
+            nombreParts += 1.0 + (nombreEnfants - 2);
         }
 
-        return parts;
+        if ( parentIsole ) {
+            if ( nombreEnfants > 0 ){
+                nombreParts = nombreParts + 0.5;
+            }
+        }
+
+        // Veuf avec enfant
+        if ( situationFamiliale == SituationFamiliale.VEUF && nombreEnfants > 0 ) {
+            nombreParts = nombreParts + 1;
+        }
+
+        // enfant handicapé
+        nombreParts = nombreParts + nombreEnfantsHandicapes * 0.5;
+
+        return nombreParts;
     }
 }

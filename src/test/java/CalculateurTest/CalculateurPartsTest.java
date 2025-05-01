@@ -29,7 +29,7 @@ public class CalculateurPartsTest {
     public void testCalculerParts(String situation, int nbEnfants, double expectedParts) {
         SituationFamiliale situationFamiliale = SituationFamiliale.valueOf(situation);
         FoyerFiscal foyer = new FoyerFiscal(50000, situationFamiliale, nbEnfants);
-        double result = calculateur.calculerParts(foyer);
+        double result = calculateur.calculerParts(foyer.getSituationFamiliale(), foyer.getNombreEnfants(), 0, false);
         assertEquals(expectedParts, result, 0.001);
     }
 }
