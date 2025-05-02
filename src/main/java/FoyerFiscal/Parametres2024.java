@@ -18,4 +18,6 @@ public class Parametres2024 {
     // Taux impots sur les revenues exceptionelles
     public static final double[] tauxCEHRCelibataire = { 0.0, 0.03, 0.04, 0.04 };
     public static final double[] tauxCEHRCouple =      { 0.0, 0.0,  0.03, 0.04 };
+
+    public static final double PLAFOND_DEMI_PART = 1759.0;
 }

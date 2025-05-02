@@ -1,9 +1,6 @@
 package com.kerware.simulateur;
 
-import Calculateurs.CalculateurAbattements;
-import Calculateurs.CalculateurDecote;
-import Calculateurs.CalculateurHautRevenu;
-import Calculateurs.CalculateurParts;
+import Calculateurs.*;
 import FoyerFiscal.FoyerFiscal;
 
 /**
@@ -51,32 +48,6 @@ public class Simulateur {
     private double t04 = 0.45;
 
     private double[] tauxImpositionTranches = { t00, t01, t02, t03, t04 };
-
-
-    // Les limites des tranches pour la contribution exceptionnelle sur les hauts revenus
-    private int lce00 = 0;
-    private int lce01 = 250000;
-    private int lce02 = 500000;
-    private int lce03 = 1000000;
-    private int lce04 = Integer.MAX_VALUE;
-
-    private int[] limitesCEHR = new int[5];
-
-    // Les taux de la contribution exceptionnelle sur les hauts revenus pour les celibataires
-    private double tce00 = 0.0;
-    private double tce01 = 0.03;
-    private double tce02 = 0.04;
-    private double tce03 = 0.04;
-
-    private double[] tauxCEHRCelibataire = new double[4];
-
-    // Les taux de la contribution exceptionnelle sur les hauts revenus pour les couples
-    private double tce00C = 0.0;
-    private double tce01C = 0.0;
-    private double tce02C = 0.03;
-    private double tce03C = 0.04;
-
-    private double[] tauxCEHRCouple = new double[4];
 
     // Abattement
     private  int lmontantAbattementMax = 14171;
@@ -183,21 +154,6 @@ public class Simulateur {
         }
 
         // Initialisation des variables
-        limitesCEHR[0] = lce00;
-        limitesCEHR[1] = lce01;
-        limitesCEHR[2] = lce02;
-        limitesCEHR[3] = lce03;
-        limitesCEHR[4] = lce04;
-
-        tauxCEHRCelibataire[0] = tce00;
-        tauxCEHRCelibataire[1] = tce01;
-        tauxCEHRCelibataire[2] = tce02;
-        tauxCEHRCelibataire[3] = tce03;
-
-        tauxCEHRCouple[0] = tce00C;
-        tauxCEHRCouple[1] = tce01C;
-        tauxCEHRCouple[2] = tce02C;
-        tauxCEHRCouple[3] = tce03C;
 
         System.out.println("--------------------------------------------------");
         System.out.println( "Revenu net declarant1 : " + revenuNetDeclarant1 );
@@ -285,22 +241,9 @@ public class Simulateur {
         // EXIGENCE : EXG_IMPOT_05
         // baisse impot
 
-        double baisseImpot = montantImpotDeclarants - montantImpot;
-
-        System.out.println( "Baisse d'impôt : " + baisseImpot );
-
-        // dépassement plafond
-        double ecartPts = nombreParts - nombrePartsDeclarants;
-
-        double plafond = (ecartPts / 0.5) * plafDemiPart;
-
-        System.out.println( "Plafond de baisse autorisée " + plafond );
-
-        if ( baisseImpot >= plafond ) {
-            montantImpot = montantImpotDeclarants - plafond;
-        }
-
-        System.out.println( "Impôt brut après plafonnement avant decote : " + montantImpot );
+        CalculateurBaisseImpot calculateurBaisseImpot = new CalculateurBaisseImpot();
+        montantImpot = calculateurBaisseImpot.calculerBaisseImpot(montantImpotDeclarants, montantImpot, nombrePartsDeclarants, nombreParts);
+        System.out.println("Impôt brut après plafonnement avant décote : " + montantImpot);
         montantImpotAvantDecote = montantImpot;
 
         // Calcul de la decote
