@@ -54,8 +54,6 @@ public class Simulateur {
     private  int lmontantAbattementMin = 495;
     private double tmontantAbattement = 0.1;
 
-    // Plafond de baisse maximal par demi part
-    private double plafDemiPart = 1759;
 
     // revenu fiscal de référence
     private double revenuFiscalReference = 0;
@@ -78,8 +76,8 @@ public class Simulateur {
     // impôt du foyer fiscal
     private double montantImpot = 0;
     private double montantImpotAvantDecote = 0;
-    // parent isolé
-    private boolean parentIsole = false;
+
+
     // Contribution exceptionnelle sur les hauts revenus
     private double contributionExceptionnelle = 0;
 
