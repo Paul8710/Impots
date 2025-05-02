@@ -196,7 +196,7 @@ public class Simulateur {
         // EXIGENCE : EXG_IMPOT_04
 
         CalculateurImpotBrut calculateurImpotBrut = new CalculateurImpotBrut();
-        montantImpotDeclarants = calculateurImpotBrut.calculerImpotBrut(revenuFiscalReference, situationFamiliale, nombrePartsDeclarants );
+        montantImpotDeclarants = calculateurImpotBrut.calculerImpotBrut(revenuFiscalReference, nombrePartsDeclarants );
 
         System.out.println( "Impôt brut des déclarants : " + montantImpotDeclarants );
 

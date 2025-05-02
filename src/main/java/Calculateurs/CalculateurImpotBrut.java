@@ -8,7 +8,7 @@ public class CalculateurImpotBrut {
     /**
      *
      */
-    public double calculerImpotBrut(double revenuFiscalReference, SituationFamiliale situationFamiliale, double nombrePartsDeclarants) {
+    public double calculerImpotBrut(double revenuFiscalReference, double nombrePartsDeclarants) {
         double revenuParPart = revenuFiscalReference / nombrePartsDeclarants;
         double montantImpotFoyer = 0;
         int i = 0;
