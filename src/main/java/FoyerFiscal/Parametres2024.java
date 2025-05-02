@@ -20,4 +20,10 @@ public class Parametres2024 {
     public static final double[] tauxCEHRCouple =      { 0.0, 0.0,  0.03, 0.04 };
 
     public static final double PLAFOND_DEMI_PART = 1759.0;
+
+    // Les limites des tranches de revenus imposables
+    public static final int[] LIMITES_TRANCHES_IMPOT = { 0, 11294, 28797, 82341, 177106, Integer.MAX_VALUE };
+
+    // Les taux d'imposition par tranche
+    public static final double[] TRANCHES_TAUX_IMPOSITION = { 0.0, 0.11, 0.3, 0.41, 0.45 };
 }

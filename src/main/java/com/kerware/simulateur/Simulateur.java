@@ -196,31 +196,18 @@ public class Simulateur {
 
         // Calcul impôt des declarants
         // EXIGENCE : EXG_IMPOT_04
-        rImposable = revenuFiscalReference / nombrePartsDeclarants;
 
-        montantImpotDeclarants = 0;
-
-        int i = 0;
-        do {
-            if ( rImposable >= limitesTranchesFiscales[i] && rImposable < limitesTranchesFiscales[i+1] ) {
-                montantImpotDeclarants += ( rImposable - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
-                break;
-            } else {
-                montantImpotDeclarants += ( limitesTranchesFiscales[i+1] - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
-            }
-            i++;
-        } while( i < 5);
-
-        montantImpotDeclarants = montantImpotDeclarants * nombrePartsDeclarants;
-        montantImpotDeclarants = Math.round( montantImpotDeclarants );
+        CalculateurImpotBrut calculateurImpotBrut = new CalculateurImpotBrut();
+        montantImpotDeclarants = calculateurImpotBrut.calculerImpotBrut(revenuFiscalReference, situationFamiliale, nombrePartsDeclarants );
 
         System.out.println( "Impôt brut des déclarants : " + montantImpotDeclarants );
+
 
         // Calcul impôt foyer fiscal complet
         // EXIGENCE : EXG_IMPOT_04
         rImposable =  revenuFiscalReference / nombreParts;
         montantImpot = 0;
-        i = 0;
+        int i = 0;
 
         do {
             if ( rImposable >= limitesTranchesFiscales[i] && rImposable < limitesTranchesFiscales[i+1] ) {
