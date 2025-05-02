@@ -12,4 +12,10 @@ public class Parametres2024 {
 
     // Taux de la décote
     public static final double TAUX_DECOTE = 0.4525;
+
+    //
+    public static int[] limitesCEHR = { 0, 250000, 500000, 1000000, Integer.MAX_VALUE };
+    // Taux impots sur les revenues exceptionelles
+    public static final double[] tauxCEHRCelibataire = { 0.0, 0.03, 0.04, 0.04 };
+    public static final double[] tauxCEHRCouple =      { 0.0, 0.0,  0.03, 0.04 };
 }

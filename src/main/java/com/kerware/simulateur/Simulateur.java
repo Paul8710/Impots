@@ -2,6 +2,7 @@ package com.kerware.simulateur;
 
 import Calculateurs.CalculateurAbattements;
 import Calculateurs.CalculateurDecote;
+import Calculateurs.CalculateurHautRevenu;
 import Calculateurs.CalculateurParts;
 import FoyerFiscal.FoyerFiscal;
 
@@ -233,28 +234,9 @@ public class Simulateur {
 
         // EXIGENCE : EXG_IMPOT_07:
         // Contribution exceptionnelle sur les hauts revenus
-        contributionExceptionnelle = 0;
-        int i = 0;
-        do {
-            if ( revenuFiscalReference >= limitesCEHR[i] && revenuFiscalReference < limitesCEHR[i+1] ) {
-                if ( nombrePartsDeclarants== 1 ) {
-                    contributionExceptionnelle += ( revenuFiscalReference - limitesCEHR[i] ) * tauxCEHRCelibataire[i];
-                } else {
-                    contributionExceptionnelle += ( revenuFiscalReference - limitesCEHR[i] ) * tauxCEHRCouple[i];
-                }
-                break;
-            } else {
-                if ( nombrePartsDeclarants== 1 ) {
-                    contributionExceptionnelle += ( limitesCEHR[i+1] - limitesCEHR[i] ) * tauxCEHRCelibataire[i];
-                } else {
-                    contributionExceptionnelle += ( limitesCEHR[i+1] - limitesCEHR[i] ) * tauxCEHRCouple[i];
-                }
-            }
-            i++;
-        } while( i < 5);
-
-        contributionExceptionnelle = Math.round( contributionExceptionnelle );
-        System.out.println( "Contribution exceptionnelle sur les hauts revenus : " + contributionExceptionnelle );
+        CalculateurHautRevenu calculateurHautRevenu = new CalculateurHautRevenu();
+        contributionExceptionnelle = calculateurHautRevenu.calculerCEHR(revenuFiscalReference, situationFamiliale);
+        System.out.println("Contribution exceptionnelle sur les hauts revenus : " + contributionExceptionnelle);
 
         // Calcul impôt des declarants
         // EXIGENCE : EXG_IMPOT_04
@@ -262,7 +244,7 @@ public class Simulateur {
 
         montantImpotDeclarants = 0;
 
-        i = 0;
+        int i = 0;
         do {
             if ( rImposable >= limitesTranchesFiscales[i] && rImposable < limitesTranchesFiscales[i+1] ) {
                 montantImpotDeclarants += ( rImposable - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
