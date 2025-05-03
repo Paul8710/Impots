@@ -21,6 +21,12 @@ public class Parametres2024 {
 
     public static final double PLAFOND_DEMI_PART = 1759.0;
 
+    // Tranches de revenu imposable pour l'année 2024
+    public static final int[] TRANCHES = { 0, 11294, 28797, 82341, 177106, Integer.MAX_VALUE };
+
+    // Taux d'imposition correspondant à chaque tranche
+    public static final double[] TAUX = { 0.0, 0.11, 0.30, 0.41, 0.45 };
+
     // Les limites des tranches de revenus imposables
     public static final int[] LIMITES_TRANCHES_IMPOT = { 0, 11294, 28797, 82341, 177106, Integer.MAX_VALUE };
 

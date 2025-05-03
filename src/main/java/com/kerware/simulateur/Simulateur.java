@@ -194,33 +194,11 @@ public class Simulateur {
 
         // Calcul impôt des declarants
         // EXIGENCE : EXG_IMPOT_04
-
-        CalculateurImpotBrut calculateurImpotBrut = new CalculateurImpotBrut();
-        montantImpotDeclarants = calculateurImpotBrut.calculerImpotBrut(revenuFiscalReference, nombrePartsDeclarants );
-
-        System.out.println( "Impôt brut des déclarants : " + montantImpotDeclarants );
-
-
+        CalculateurBarèmeProgressif barème = new CalculateurBarèmeProgressif();
+        montantImpotDeclarants = barème.calculerImpot(revenuFiscalReference, nombrePartsDeclarants);
         // Calcul impôt foyer fiscal complet
         // EXIGENCE : EXG_IMPOT_04
-        rImposable =  revenuFiscalReference / nombreParts;
-        montantImpot = 0;
-        int i = 0;
-
-        do {
-            if ( rImposable >= limitesTranchesFiscales[i] && rImposable < limitesTranchesFiscales[i+1] ) {
-                montantImpot += ( rImposable - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
-                break;
-            } else {
-                montantImpot += ( limitesTranchesFiscales[i+1] - limitesTranchesFiscales[i] ) * tauxImpositionTranches[i];
-            }
-            i++;
-        } while( i < 5);
-
-        montantImpot = montantImpot * nombreParts;
-        montantImpot = Math.round( montantImpot );
-
-        System.out.println( "Impôt brut du foyer fiscal complet : " + montantImpot );
+        montantImpot = barème.calculerImpot(revenuFiscalReference, nombreParts);
 
         // Vérification de la baisse d'impôt autorisée
         // EXIGENCE : EXG_IMPOT_05
