@@ -31,4 +31,6 @@ public class Parametres2024 {
     public static final double TAUX_MONTANT_ABATTEMENT = 0.1;
     //
     public static final int[] LIMITES_CEHR = {0, 250000, 500000, 1000000, Integer.MAX_VALUE};
+    // Nombre enfant maximum au sein d'un foyer
+    public static final int NOMBRE_ENFANT_MAX = 7;
 }

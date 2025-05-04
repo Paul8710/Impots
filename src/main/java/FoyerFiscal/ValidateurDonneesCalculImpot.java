@@ -45,7 +45,7 @@ public class ValidateurDonneesCalculImpot {
             );
         }
 
-        if (nombreEnfants > 7) {
+        if (nombreEnfants > Parametres2024.NOMBRE_ENFANT_MAX) {
             throw new IllegalArgumentException(
                     "Le nombre d'enfants ne peut pas être supérieur à 7"
             );

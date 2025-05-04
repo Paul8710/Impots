@@ -112,8 +112,20 @@ public class Simulateur {
     }
 
 
-    // Fonction de calcul de l'impôt sur le revenu net en France en 2024 sur les revenu 2023
-
+    /**
+     * Calcule l'impôt sur le revenu net du foyer en fonction des paramètres fournis,
+     * en France pour l'année 2024 sur les revenus de 2023.
+     *
+     * @param revenuNetDeclarant1 Revenu net imposable du déclarant 1
+     * @param revenuNetDeclarant2 Revenu net imposable du déclarant 2
+     *                            (0 si pas de déclarant 2)
+     * @param situationFamiliale Situation familiale du foyer fiscal (célibataire, marié ...)
+     * @param nombreEnfants Nombre d’enfants au sein du foyer
+     * @param nombreEnfantsHandicapes Nombre d’enfants en situation de handicap au sein du foyer
+     * @param parentIsole Indique si le foyer est constitué d’un parent isolé
+     * @return Le montant d’impôt net dû par le foyer fiscal (arrondi à l’euro le plus proche)
+     * @throws IllegalArgumentException si une incohérence est détectée dans les paramètres
+     */
     public int calculImpot( int revenuNetDeclarant1, int revenuNetDeclarant2,
                             SituationFamiliale situationFamiliale, int nombreEnfants,
                             int nombreEnfantsHandicapes, boolean parentIsole) {
@@ -159,8 +171,6 @@ public class Simulateur {
         System.out.println( "Nombre d'enfants handicapés : " + nombreEnfantsHandicapes );
         System.out.println( "Nombre de parts : " + nombreParts );
 
-
-
         // EXIGENCE : EXG_IMPOT_07:
         // Contribution exceptionnelle sur les hauts revenus
         CalculateurHautRevenu calculateurHautRevenu = new CalculateurHautRevenu();
@@ -195,11 +205,7 @@ public class Simulateur {
 
         System.out.println( "Decote : " + decote );
 
-        montantImpot = montantImpot - decote;
-
-        montantImpot += contributionExceptionnelle;
-
-        montantImpot = Math.round( montantImpot );
+        montantImpot = Math.round( (montantImpot - decote) + contributionExceptionnelle );
 
         System.out.println( "Impôt sur le revenu net final : " + montantImpot );
         return  (int)montantImpot;

@@ -4,8 +4,8 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
 
     private Simulateur simulateur = new Simulateur();
 
-    private int revenusNetDecl1 = 0;
-    private int revenusNetDecl2 = 0;
+    private int revenusNetDeclarant1 = 0;
+    private int revenusNetDeclarant2 = 0;
     private SituationFamiliale situationFamiliale;
     private int nbEnfantsACharge;
     private int nbEnfantsSituationHandicap;
@@ -16,7 +16,7 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
      */
     @Override
     public void setRevenusNetDeclarant1(int revenusNetDecl1) {
-        this.revenusNetDecl1 = revenusNetDecl1;
+        this.revenusNetDeclarant1 = revenusNetDecl1;
     }
 
     /**
@@ -24,7 +24,7 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
      */
     @Override
     public void setRevenusNetDeclarant2(int revenusNetDecl2) {
-        this.revenusNetDecl2 = revenusNetDecl2;
+        this.revenusNetDeclarant2 = revenusNetDecl2;
     }
 
     /**
@@ -65,7 +65,7 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
      */
     @Override
     public void calculImpotSurRevenuNet() {
-        simulateur.calculImpot(revenusNetDecl1, revenusNetDecl2, situationFamiliale,
+        simulateur.calculImpot(revenusNetDeclarant1, revenusNetDeclarant2, situationFamiliale,
                 nbEnfantsACharge, nbEnfantsSituationHandicap, parentIsole);
     }
 
@@ -74,7 +74,7 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
      */
     @Override
     public int getRevenuNetDeclatant1() {
-        return revenusNetDecl1;
+        return revenusNetDeclarant1;
     }
 
     /**
@@ -82,7 +82,7 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
      */
     @Override
     public int getRevenuNetDeclatant2() {
-        return revenusNetDecl2;
+        return revenusNetDeclarant2;
     }
 
     /**
