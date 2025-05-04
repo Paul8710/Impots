@@ -1,13 +1,14 @@
 package Calculateurs;
 
-import static FoyerFiscal.Parametres2024.*;
+import static FoyerFiscal.Parametres2024.TAUX;
+import static FoyerFiscal.Parametres2024.TRANCHES;
 
-public class CalculateurBarèmeProgressif {
+public class CalculateurBaremeProgressif {
     /**
      * Cette méthode calcule l'impôt sur le revenu basé sur le barème progressif,
      * en fonction du revenu total et du nombre de parts fiscales.
      *
-     * @param revenu       Le revenu total du foyer fiscal
+     * @param revenu      Le revenu total du foyer fiscal
      * @param nombreParts Le nombre de parts fiscales
      * @return L'impôt total arrondi à l'euro près
      */
@@ -28,7 +29,8 @@ public class CalculateurBarèmeProgressif {
             double taux = TAUX[i];
 
             // Affichage des tranches et taux
-            System.out.println("Tranche " + (i + 1) + ": [" + borneInf + ", " + borneSup + "] avec taux " + taux);
+            System.out.println("Tranche " + (i + 1) +
+                    ": [" + borneInf + ", " + borneSup + "] avec taux " + taux);
 
             if (revenuParPart > borneSup) {
                 // Tranche complète

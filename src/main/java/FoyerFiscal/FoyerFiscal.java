@@ -10,11 +10,13 @@ public class FoyerFiscal {
 
     /**
      * Constructeur de la classe
+     *
      * @param revenuNetImposable Revenut net Imposable
      * @param situationFamiliale SituationFamiliale
-     * @param nombreEnfants Le nombre d'enfants
+     * @param nombreEnfants      Le nombre d'enfants
      */
-    public FoyerFiscal(double revenuNetImposable, SituationFamiliale situationFamiliale, int nombreEnfants) {
+    public FoyerFiscal(double revenuNetImposable, SituationFamiliale situationFamiliale,
+                       int nombreEnfants) {
         if (revenuNetImposable < 0) {
             throw new IllegalArgumentException("Le revenu net imposable ne peut pas être négatif.");
         }
@@ -27,14 +29,23 @@ public class FoyerFiscal {
         this.nombreEnfants = nombreEnfants;
     }
 
+    /**
+     * @return Le revenu net imposable
+     */
     public double getRevenuNetImposable() {
         return revenuNetImposable;
     }
 
+    /**
+     * @return La situation familiale
+     */
     public SituationFamiliale getSituationFamiliale() {
         return situationFamiliale;
     }
 
+    /**
+     * @return le nombre d'enfant
+     */
     public int getNombreEnfants() {
         return nombreEnfants;
     }

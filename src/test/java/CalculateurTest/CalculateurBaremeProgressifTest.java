@@ -1,14 +1,14 @@
 package CalculateurTest;
 
-import Calculateurs.CalculateurBarèmeProgressif;
+import Calculateurs.CalculateurBaremeProgressif;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CalculateurBarèmeProgressifTest {
+class CalculateurBaremeProgressifTest {
 
-    private final CalculateurBarèmeProgressif calculateur = new CalculateurBarèmeProgressif();
+    private final CalculateurBaremeProgressif calculateur = new CalculateurBaremeProgressif();
 
     @ParameterizedTest(name = "revenu={0}, parts={1}, impot attendu={2}")
     @CsvSource({

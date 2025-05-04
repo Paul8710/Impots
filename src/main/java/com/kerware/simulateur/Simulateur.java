@@ -1,7 +1,6 @@
 package com.kerware.simulateur;
 
 import Calculateurs.*;
-import FoyerFiscal.FoyerFiscal;
 
 /**
  *  Cette classe permet de simuler le calcul de l'impôt sur le revenu
@@ -194,7 +193,7 @@ public class Simulateur {
 
         // Calcul impôt des declarants
         // EXIGENCE : EXG_IMPOT_04
-        CalculateurBarèmeProgressif barème = new CalculateurBarèmeProgressif();
+        CalculateurBaremeProgressif barème = new CalculateurBaremeProgressif();
         montantImpotDeclarants = barème.calculerImpot(revenuFiscalReference, nombrePartsDeclarants);
         // Calcul impôt foyer fiscal complet
         // EXIGENCE : EXG_IMPOT_04

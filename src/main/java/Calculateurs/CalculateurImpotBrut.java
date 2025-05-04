@@ -1,7 +1,6 @@
 package Calculateurs;
 
 import FoyerFiscal.Parametres2024;
-import com.kerware.simulateur.SituationFamiliale;
 
 public class CalculateurImpotBrut {
 
@@ -17,15 +16,18 @@ public class CalculateurImpotBrut {
         double[] tauxImpositionTranches = Parametres2024.TRANCHES_TAUX_IMPOSITION;
 
         while (i < tauxImpositionTranches.length) {
-            if (revenuParPart >= limitesTranchesFiscales[i] && revenuParPart < limitesTranchesFiscales[i + 1]) {
-                montantImpotFoyer += (revenuParPart - limitesTranchesFiscales[i]) * tauxImpositionTranches[i];
+            if (revenuParPart >= limitesTranchesFiscales[i]
+                    && revenuParPart < limitesTranchesFiscales[i + 1]) {
+                montantImpotFoyer += (revenuParPart - limitesTranchesFiscales[i])
+                        * tauxImpositionTranches[i];
                 break;
             } else {
-                montantImpotFoyer += (limitesTranchesFiscales[i + 1] - limitesTranchesFiscales[i]) * tauxImpositionTranches[i];
+                montantImpotFoyer += (limitesTranchesFiscales[i + 1] - limitesTranchesFiscales[i])
+                        * tauxImpositionTranches[i];
             }
             i++;
         }
 
-        return Math.round(montantImpotFoyer*nombrePartsDeclarants);
+        return Math.round(montantImpotFoyer * nombrePartsDeclarants);
     }
 }
