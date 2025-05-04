@@ -1,6 +1,17 @@
 package com.kerware.simulateur;
 
-import Calculateurs.*;
+import Calculateurs.CalculateurParts;
+import Calculateurs.CalculateurDecote;
+import Calculateurs.CalculateurBaisseImpot;
+import Calculateurs.CalculateurBaremeProgressif;
+import Calculateurs.CalculateurHautRevenu;
+import Calculateurs.CalculateurAbattements;
+
+import static FoyerFiscal.Parametres2024.TAUX_MONTANT_ABATTEMENT;
+import static FoyerFiscal.Parametres2024.LIMITE_MONTANT_ABATTEMENT_MAX;
+import static FoyerFiscal.Parametres2024.LIMITE_MONTANT_ABATTEMENT_MIN;
+
+
 
 /**
  *  Cette classe permet de simuler le calcul de l'impôt sur le revenu
@@ -24,41 +35,9 @@ import Calculateurs.*;
  **/
 
 public class Simulateur {
-
-
-    // Les limites des tranches de revenus imposables
-    /*
-    TODO: Peut être faire des constantes facilelement modifiable dans param2024 ?
-     */
-    private int l00 = 0 ;
-    private int l01 = 11294;
-    private int l02 = 28797;
-    private int l03 = 82341;
-    private int l04 = 177106;
-    private int l05 = Integer.MAX_VALUE;
-
-    private int[] limitesTranchesFiscales = { l00, l01, l02, l03, l04, l05 };
-
-    // Les taux d'imposition par tranche
-    private double t00 = 0.0;
-    private double t01 = 0.11;
-    private double t02 = 0.3;
-    private double t03 = 0.41;
-    private double t04 = 0.45;
-
-    private double[] tauxImpositionTranches = { t00, t01, t02, t03, t04 };
-
-    // Abattement
-    private  int lmontantAbattementMax = 14171;
-    private  int lmontantAbattementMin = 495;
-    private double tmontantAbattement = 0.1;
-
-
     // revenu fiscal de référence
     private double revenuFiscalReference = 0;
 
-    // revenu imposable
-    private double rImposable = 0;
 
     // abattement
     private double montantAbattement = 0;
@@ -82,31 +61,51 @@ public class Simulateur {
 
     // Getters pour adapter le code legacy pour les tests unitaires
 
+    /**
+     * @return le revenu fiscal de référance.
+     */
     public double getRevenuReference() {
         return revenuFiscalReference;
     }
 
+    /**
+     * @return le montant de la décote.
+     */
     public double getDecote() {
         return decote;
     }
 
-
+    /**
+     * @return le montant de l'abattement.
+     */
     public double getAbattement() {
         return montantAbattement;
     }
 
+    /**
+     * @return le nombre de parts.
+     */
     public double getNbParts() {
         return nombreParts;
     }
 
+    /**
+     * @return le montant des impôts avant la décote.
+     */
     public double getImpotAvantDecote() {
         return montantImpotAvantDecote;
     }
 
+    /**
+     * @return le montant des impôts net.
+     */
     public double getImpotNet() {
         return montantImpot;
     }
 
+    /**
+     * @return le montant de la contribution exceptionnelle.
+     */
     public double getContribExceptionnelle() {
         return contributionExceptionnelle;
     }
@@ -114,7 +113,9 @@ public class Simulateur {
 
     // Fonction de calcul de l'impôt sur le revenu net en France en 2024 sur les revenu 2023
 
-    public int calculImpot( int revenuNetDeclarant1, int revenuNetDeclarant2, SituationFamiliale situationFamiliale, int nombreEnfants, int nombreEnfantsHandicapes, boolean parentIsole) {
+    public int calculImpot( int revenuNetDeclarant1, int revenuNetDeclarant2,
+                            SituationFamiliale situationFamiliale, int nombreEnfants,
+                            int nombreEnfantsHandicapes, boolean parentIsole) {
 
         // Préconditions
         if ( revenuNetDeclarant1  < 0 || revenuNetDeclarant2 < 0 ) {
@@ -126,7 +127,9 @@ public class Simulateur {
         }
 
         if ( nombreEnfantsHandicapes < 0 ) {
-            throw new IllegalArgumentException("Le nombre d'enfants handicapés ne peut pas être négatif");
+            throw new IllegalArgumentException(
+                    "Le nombre d'enfants handicapés ne peut pas être négatif"
+            );
         }
 
         if ( situationFamiliale == null ) {
@@ -134,20 +137,28 @@ public class Simulateur {
         }
 
         if ( nombreEnfantsHandicapes > nombreEnfants ) {
-            throw new IllegalArgumentException("Le nombre d'enfants handicapés ne peut pas être supérieur au nombre d'enfants");
+            throw new IllegalArgumentException(
+                    "Le nombre d'enfants handicapés ne peut pas être supérieur au nombre d'enfants"
+            );
         }
 
         if ( nombreEnfants > 7 ) {
             throw new IllegalArgumentException("Le nombre d'enfants ne peut pas être supérieur à 7");
         }
 
-        if ( parentIsole && ( situationFamiliale == SituationFamiliale.MARIE || situationFamiliale == SituationFamiliale.PACSE ) ) {
+        if ( parentIsole && ( situationFamiliale == SituationFamiliale.MARIE
+                || situationFamiliale == SituationFamiliale.PACSE ) ) {
             throw new IllegalArgumentException("Un parent isolé ne peut pas être marié ou pacsé");
         }
 
-        boolean seul = situationFamiliale == SituationFamiliale.CELIBATAIRE || situationFamiliale == SituationFamiliale.DIVORCE || situationFamiliale == SituationFamiliale.VEUF;
+        boolean seul = situationFamiliale == SituationFamiliale.CELIBATAIRE
+                || situationFamiliale == SituationFamiliale.DIVORCE
+                || situationFamiliale == SituationFamiliale.VEUF;
         if (  seul && revenuNetDeclarant2 > 0 ) {
-            throw new IllegalArgumentException("Un célibataire, un divorcé ou un veuf ne peut pas avoir de revenu pour le déclarant 2");
+            throw new IllegalArgumentException(
+                    "Un célibataire, un divorcé ou un veuf " +
+                            "ne peut pas avoir de revenu pour le déclarant 2"
+            );
         }
 
         // Initialisation des variables
@@ -160,7 +171,9 @@ public class Simulateur {
         // Abattement
         // EXIGENCE : EXG_IMPOT_02
         CalculateurAbattements calculateurAbattements = new CalculateurAbattements();
-        montantAbattement = calculateurAbattements.calculerAbattement(revenuNetDeclarant1, revenuNetDeclarant2, tmontantAbattement, lmontantAbattementMin, lmontantAbattementMax, situationFamiliale);
+        montantAbattement = calculateurAbattements.calculerAbattement(
+                revenuNetDeclarant1, revenuNetDeclarant2, TAUX_MONTANT_ABATTEMENT,
+                LIMITE_MONTANT_ABATTEMENT_MIN, LIMITE_MONTANT_ABATTEMENT_MAX, situationFamiliale);
         System.out.println( "Abattement : " + montantAbattement );
 
         revenuFiscalReference = revenuNetDeclarant1 + revenuNetDeclarant2 - montantAbattement;
@@ -177,7 +190,8 @@ public class Simulateur {
 
         nombrePartsDeclarants= calculateurParts.nombrePartsSituationFamiliale(situationFamiliale);
 
-        nombreParts = calculateurParts.calculerParts(situationFamiliale, nombreEnfants, nombreEnfantsHandicapes, parentIsole);
+        nombreParts = calculateurParts.calculerParts(situationFamiliale, nombreEnfants,
+                nombreEnfantsHandicapes, parentIsole);
 
         System.out.println( "Nombre d'enfants  : " + nombreEnfants );
         System.out.println( "Nombre d'enfants handicapés : " + nombreEnfantsHandicapes );
@@ -188,13 +202,16 @@ public class Simulateur {
         // EXIGENCE : EXG_IMPOT_07:
         // Contribution exceptionnelle sur les hauts revenus
         CalculateurHautRevenu calculateurHautRevenu = new CalculateurHautRevenu();
-        contributionExceptionnelle = calculateurHautRevenu.calculerCEHR(revenuFiscalReference, situationFamiliale);
-        System.out.println("Contribution exceptionnelle sur les hauts revenus : " + contributionExceptionnelle);
+        contributionExceptionnelle = calculateurHautRevenu.calculerCEHR(
+                revenuFiscalReference, situationFamiliale);
+        System.out.println("Contribution exceptionnelle sur les hauts revenus : "
+                + contributionExceptionnelle);
 
         // Calcul impôt des declarants
         // EXIGENCE : EXG_IMPOT_04
         CalculateurBaremeProgressif barème = new CalculateurBaremeProgressif();
-        montantImpotDeclarants = barème.calculerImpot(revenuFiscalReference, nombrePartsDeclarants);
+        montantImpotDeclarants = barème.calculerImpot(
+                revenuFiscalReference, nombrePartsDeclarants);
         // Calcul impôt foyer fiscal complet
         // EXIGENCE : EXG_IMPOT_04
         montantImpot = barème.calculerImpot(revenuFiscalReference, nombreParts);
@@ -204,7 +221,8 @@ public class Simulateur {
         // baisse impot
 
         CalculateurBaisseImpot calculateurBaisseImpot = new CalculateurBaisseImpot();
-        montantImpot = calculateurBaisseImpot.calculerBaisseImpot(montantImpotDeclarants, montantImpot, nombrePartsDeclarants, nombreParts);
+        montantImpot = calculateurBaisseImpot.calculerBaisseImpot(
+                montantImpotDeclarants, montantImpot, nombrePartsDeclarants, nombreParts);
         System.out.println("Impôt brut après plafonnement avant décote : " + montantImpot);
         montantImpotAvantDecote = montantImpot;
 
@@ -224,9 +242,4 @@ public class Simulateur {
         System.out.println( "Impôt sur le revenu net final : " + montantImpot );
         return  (int)montantImpot;
     }
-
-
-
-
-
 }
