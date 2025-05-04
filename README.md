@@ -18,6 +18,7 @@ Cela permet aussi, pour les prochaines années, de pouvoir réutiliser le code, 
 Nous avons fait le choix de faire une classe permettant de valider les données mises en paramètre de la fonction calculImpot. Cela permet de donner de la lisibilité au code et d'éviter de vérifier directement dans la classe destinée au calcul.
 
 Nous avons renommé toutes les variables par des noms plus parlant, permettant de s'y retrouver plus facilement et aussi enlevé les affichages console afin de mieux s'y retrouver.
+Nous avons également mis une documentation permettant de savoir ce que font les principales fonctions, leurs paramètres et leur valeur de retour.
 
 Nous avons utilisé Maven pour gérer la partie "test" du projet, afin de voir le rapport de couverture avec Jacoco, ainsi que Checkstyle, permettant de vérifier si le fichier des règles de l’IUT a été respecté.
 
