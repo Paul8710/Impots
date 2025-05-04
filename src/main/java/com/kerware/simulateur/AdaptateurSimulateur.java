@@ -68,39 +68,6 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
         simulateur.calculImpot(revenusNetDeclarant1, revenusNetDeclarant2, situationFamiliale,
                 nbEnfantsACharge, nbEnfantsSituationHandicap, parentIsole);
     }
-
-    /**
-     * @return le revenu du déclarant 1.
-     */
-    @Override
-    public int getRevenuNetDeclatant1() {
-        return revenusNetDeclarant1;
-    }
-
-    /**
-     * @return le revenu du déclarant 2.
-     */
-    @Override
-    public int getRevenuNetDeclatant2() {
-        return revenusNetDeclarant2;
-    }
-
-    /**
-     * @return a contribution exceptionnelle.
-     */
-    @Override
-    public double getContribExceptionnelle() {
-        return simulateur.getContribExceptionnelle();
-    }
-
-    /**
-     * @return le revenu fiscal de référence.
-     */
-    @Override
-    public int getRevenuFiscalReference() {
-        return (int) simulateur.getRevenuReference();
-    }
-
     /**
      * @return l'abattement possible au sein d'un foyer
      */
@@ -116,23 +83,6 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
     public double getNbPartsFoyerFiscal() {
         return simulateur.getNbParts();
     }
-
-    /**
-     * @return le montant des impots avant la décote.
-     */
-    @Override
-    public int getImpotAvantDecote() {
-        return (int) simulateur.getImpotAvantDecote();
-    }
-
-    /**
-     * @return la décote.
-     */
-    @Override
-    public int getDecote() {
-        return (int) simulateur.getDecote();
-    }
-
     /**
      * @return les impots vis à vis du revenu net.
      */
