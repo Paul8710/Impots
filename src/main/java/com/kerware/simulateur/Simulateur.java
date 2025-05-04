@@ -135,79 +135,45 @@ public class Simulateur {
                 revenuNetDeclarant1, revenuNetDeclarant2, situationFamiliale,
                 nombreEnfants, nombreEnfantsHandicapes, parentIsole
         );
-        // Initialisation des variables
 
-        System.out.println("--------------------------------------------------");
-        System.out.println( "Revenu net declarant1 : " + revenuNetDeclarant1 );
-        System.out.println( "Revenu net declarant2 : " + revenuNetDeclarant2 );
-        System.out.println( "Situation familiale : " + situationFamiliale.name() );
-
-        // Abattement
-        // EXIGENCE : EXG_IMPOT_02
-        CalculateurAbattements calculateurAbattements = new CalculateurAbattements();
-        montantAbattement = calculateurAbattements.calculerAbattement(
+        // Abattement - EXIGENCE : EXG_IMPOT_02
+        montantAbattement = new CalculateurAbattements().calculerAbattement(
                 revenuNetDeclarant1, revenuNetDeclarant2, TAUX_MONTANT_ABATTEMENT,
                 LIMITE_MONTANT_ABATTEMENT_MIN, LIMITE_MONTANT_ABATTEMENT_MAX, situationFamiliale);
-        System.out.println( "Abattement : " + montantAbattement );
 
-        revenuFiscalReference = revenuNetDeclarant1 + revenuNetDeclarant2 - montantAbattement;
-        if ( revenuFiscalReference < 0 ) {
-            revenuFiscalReference = 0;
-        }
+        revenuFiscalReference = Math.max(0, revenuNetDeclarant1 + revenuNetDeclarant2
+                - montantAbattement);
 
-        System.out.println( "Revenu fiscal de référence : " + revenuFiscalReference );
+        // parts déclarants - EXIG  : EXG_IMPOT_03
+        nombrePartsDeclarants= new CalculateurParts()
+                .nombrePartsSituationFamiliale(situationFamiliale);
 
-
-        // parts déclarants
-        // EXIG  : EXG_IMPOT_03
-        CalculateurParts calculateurParts = new CalculateurParts();
-
-        nombrePartsDeclarants= calculateurParts.nombrePartsSituationFamiliale(situationFamiliale);
-
-        nombreParts = calculateurParts.calculerParts(situationFamiliale, nombreEnfants,
+        nombreParts = new CalculateurParts().calculerParts(situationFamiliale, nombreEnfants,
                 nombreEnfantsHandicapes, parentIsole);
 
-        System.out.println( "Nombre d'enfants  : " + nombreEnfants );
-        System.out.println( "Nombre d'enfants handicapés : " + nombreEnfantsHandicapes );
-        System.out.println( "Nombre de parts : " + nombreParts );
 
-        // EXIGENCE : EXG_IMPOT_07:
-        // Contribution exceptionnelle sur les hauts revenus
-        CalculateurHautRevenu calculateurHautRevenu = new CalculateurHautRevenu();
-        contributionExceptionnelle = calculateurHautRevenu.calculerCEHR(
+        // Contribution exceptionnelle sur les hauts revenus - EXIGENCE : EXG_IMPOT_07:
+        contributionExceptionnelle = new CalculateurHautRevenu().calculerCEHR(
                 revenuFiscalReference, situationFamiliale);
-        System.out.println("Contribution exceptionnelle sur les hauts revenus : "
-                + contributionExceptionnelle);
 
-        // Calcul impôt des declarants
-        // EXIGENCE : EXG_IMPOT_04
-        CalculateurBaremeProgressif bareme = new CalculateurBaremeProgressif();
-        montantImpotDeclarants = bareme.calculerImpot(
+        // EXIGENCE : EXG_IMPOT_04 - Calcul impôt des declarants
+        montantImpotDeclarants = new CalculateurBaremeProgressif().calculerImpot(
                 revenuFiscalReference, nombrePartsDeclarants);
-        // Calcul impôt foyer fiscal complet
-        // EXIGENCE : EXG_IMPOT_04
-        montantImpot = bareme.calculerImpot(revenuFiscalReference, nombreParts);
 
-        // Vérification de la baisse d'impôt autorisée
-        // EXIGENCE : EXG_IMPOT_05
-        // baisse impot
+        // EXIGENCE : EXG_IMPOT_04 - Calcul impôt foyer fiscal complet
+        montantImpot = new CalculateurBaremeProgressif()
+                .calculerImpot(revenuFiscalReference, nombreParts);
 
-        CalculateurBaisseImpot calculateurBaisseImpot = new CalculateurBaisseImpot();
-        montantImpot = calculateurBaisseImpot.calculerBaisseImpot(
+        // EXIGENCE : EXG_IMPOT_05 - Vérification de la baisse d'impôt autorisée
+        montantImpot = new CalculateurBaisseImpot().calculerBaisseImpot(
                 montantImpotDeclarants, montantImpot, nombrePartsDeclarants, nombreParts);
-        System.out.println("Impôt brut après plafonnement avant décote : " + montantImpot);
         montantImpotAvantDecote = montantImpot;
 
-        // Calcul de la decote
-        // EXIGENCE : EXG_IMPOT_06
-        CalculateurDecote calculateurDecote = new CalculateurDecote();
-        decote = calculateurDecote.calculerDecote(montantImpot, situationFamiliale);
-
-        System.out.println( "Decote : " + decote );
+        // EXIGENCE : EXG_IMPOT_06 - Calcul de la decote
+        decote = new CalculateurDecote().calculerDecote(montantImpot, situationFamiliale);
 
         montantImpot = Math.round( (montantImpot - decote) + contributionExceptionnelle );
 
-        System.out.println( "Impôt sur le revenu net final : " + montantImpot );
         return  (int)montantImpot;
     }
 }
