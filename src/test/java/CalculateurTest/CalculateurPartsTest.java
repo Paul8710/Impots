@@ -24,7 +24,7 @@ public class CalculateurPartsTest {
             "MARIE, 4, 5.0",
             "PACSE, 1, 2.5",
             "DIVORCE, 2, 2.0",
-            "VEUF, 3, 3.0"
+            "VEUF, 3, 4.0"
     })
     public void testCalculerParts(String situation, int nbEnfants, double expectedParts) {
         SituationFamiliale situationFamiliale = SituationFamiliale.valueOf(situation);
