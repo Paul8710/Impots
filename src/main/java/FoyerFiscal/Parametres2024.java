@@ -21,7 +21,8 @@ public class Parametres2024 {
     // Taux d'imposition correspondant à chaque tranche
     public static final double[] TAUX = {0.0, 0.11, 0.30, 0.41, 0.45};
     // Les limites des tranches de revenus imposables
-    public static final int[] LIMITES_TRANCHES_IMPOT = {0, 11294, 28797, 82341, 177106, Integer.MAX_VALUE};
+    public static final int[] LIMITES_TRANCHES_IMPOT =
+            {0, 11294, 28797, 82341, 177106, Integer.MAX_VALUE};
     // Les taux d'imposition par tranche
     public static final double[] TRANCHES_TAUX_IMPOSITION = {0.0, 0.11, 0.3, 0.41, 0.45};
     // Abattement
@@ -29,5 +30,5 @@ public class Parametres2024 {
     public static final int LIMITE_MONTANT_ABATTEMENT_MIN = 495;
     public static final double TAUX_MONTANT_ABATTEMENT = 0.1;
     //
-    public static int[] LIMITES_CEHR = {0, 250000, 500000, 1000000, Integer.MAX_VALUE};
+    public static final int[] LIMITES_CEHR = {0, 250000, 500000, 1000000, Integer.MAX_VALUE};
 }

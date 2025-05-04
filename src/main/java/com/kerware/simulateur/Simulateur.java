@@ -6,6 +6,7 @@ import Calculateurs.CalculateurBaisseImpot;
 import Calculateurs.CalculateurBaremeProgressif;
 import Calculateurs.CalculateurHautRevenu;
 import Calculateurs.CalculateurAbattements;
+import FoyerFiscal.ValidateurDonneesCalculImpot;
 
 import static FoyerFiscal.Parametres2024.TAUX_MONTANT_ABATTEMENT;
 import static FoyerFiscal.Parametres2024.LIMITE_MONTANT_ABATTEMENT_MAX;
@@ -118,49 +119,10 @@ public class Simulateur {
                             int nombreEnfantsHandicapes, boolean parentIsole) {
 
         // Préconditions
-        if ( revenuNetDeclarant1  < 0 || revenuNetDeclarant2 < 0 ) {
-            throw new IllegalArgumentException("Le revenu net ne peut pas être négatif");
-        }
-
-        if ( nombreEnfants < 0 ) {
-            throw new IllegalArgumentException("Le nombre d'enfants ne peut pas être négatif");
-        }
-
-        if ( nombreEnfantsHandicapes < 0 ) {
-            throw new IllegalArgumentException(
-                    "Le nombre d'enfants handicapés ne peut pas être négatif"
-            );
-        }
-
-        if ( situationFamiliale == null ) {
-            throw new IllegalArgumentException("La situation familiale ne peut pas être null");
-        }
-
-        if ( nombreEnfantsHandicapes > nombreEnfants ) {
-            throw new IllegalArgumentException(
-                    "Le nombre d'enfants handicapés ne peut pas être supérieur au nombre d'enfants"
-            );
-        }
-
-        if ( nombreEnfants > 7 ) {
-            throw new IllegalArgumentException("Le nombre d'enfants ne peut pas être supérieur à 7");
-        }
-
-        if ( parentIsole && ( situationFamiliale == SituationFamiliale.MARIE
-                || situationFamiliale == SituationFamiliale.PACSE ) ) {
-            throw new IllegalArgumentException("Un parent isolé ne peut pas être marié ou pacsé");
-        }
-
-        boolean seul = situationFamiliale == SituationFamiliale.CELIBATAIRE
-                || situationFamiliale == SituationFamiliale.DIVORCE
-                || situationFamiliale == SituationFamiliale.VEUF;
-        if (  seul && revenuNetDeclarant2 > 0 ) {
-            throw new IllegalArgumentException(
-                    "Un célibataire, un divorcé ou un veuf " +
-                            "ne peut pas avoir de revenu pour le déclarant 2"
-            );
-        }
-
+        new ValidateurDonneesCalculImpot().validerDonnees(
+                revenuNetDeclarant1, revenuNetDeclarant2, situationFamiliale,
+                nombreEnfants, nombreEnfantsHandicapes, parentIsole
+        );
         // Initialisation des variables
 
         System.out.println("--------------------------------------------------");
@@ -209,12 +171,12 @@ public class Simulateur {
 
         // Calcul impôt des declarants
         // EXIGENCE : EXG_IMPOT_04
-        CalculateurBaremeProgressif barème = new CalculateurBaremeProgressif();
-        montantImpotDeclarants = barème.calculerImpot(
+        CalculateurBaremeProgressif bareme = new CalculateurBaremeProgressif();
+        montantImpotDeclarants = bareme.calculerImpot(
                 revenuFiscalReference, nombrePartsDeclarants);
         // Calcul impôt foyer fiscal complet
         // EXIGENCE : EXG_IMPOT_04
-        montantImpot = barème.calculerImpot(revenuFiscalReference, nombreParts);
+        montantImpot = bareme.calculerImpot(revenuFiscalReference, nombreParts);
 
         // Vérification de la baisse d'impôt autorisée
         // EXIGENCE : EXG_IMPOT_05

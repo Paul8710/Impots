@@ -60,6 +60,9 @@ public class AdaptateurSimulateur implements ICalculateurImpot {
         this.parentIsole = parentEstIsole;
     }
 
+    /**
+     * Appel la fonction permettant de calculer les impots sur le revenu net
+     */
     @Override
     public void calculImpotSurRevenuNet() {
         simulateur.calculImpot(revenusNetDecl1, revenusNetDecl2, situationFamiliale,
